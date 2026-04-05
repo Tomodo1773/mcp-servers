@@ -16,6 +16,16 @@ export class SpotifyApiError extends Error {
   }
 }
 
+function formatDuration(ms: number): string {
+  const min = Math.floor(ms / 60000);
+  const sec = Math.floor((ms % 60000) / 1000).toString().padStart(2, "0");
+  return `${min}:${sec}`;
+}
+
+function artistNames(artists: SpotifyArtist[]): string {
+  return artists.map((a) => a.name).join(", ");
+}
+
 async function spotifyFetch(
   token: string,
   path: string,
@@ -122,20 +132,16 @@ export function formatSearchResults(
 
   if (type === "track" && data.tracks) {
     for (const t of data.tracks.items) {
-      const artists = t.artists.map((a: SpotifyArtist) => a.name).join(", ");
       lines.push(
-        `${t.name} - ${artists} (${t.album.name}) [spotify:track:${t.id}]`
+        `${t.name} - ${artistNames(t.artists)} (${t.album.name}) [spotify:track:${t.id}]`
       );
     }
   }
 
   if (type === "album" && data.albums) {
     for (const a of data.albums.items) {
-      const artists = a.artists
-        .map((ar: SpotifyArtist) => ar.name)
-        .join(", ");
       const year = a.release_date?.substring(0, 4) ?? "Unknown";
-      lines.push(`${a.name} - ${artists} (${year}) [spotify:album:${a.id}]`);
+      lines.push(`${a.name} - ${artistNames(a.artists)} (${year}) [spotify:album:${a.id}]`);
     }
   }
 
@@ -165,6 +171,7 @@ export function formatSearchResults(
 export async function getCurrentTrack(
   token: string
 ): Promise<SpotifyCurrentTrack | null> {
+  // 204/202 = no active playback; spotifyFetch would throw on these, so use raw fetch
   const res = await fetch(
     `${SPOTIFY_API_BASE}/me/player/currently-playing`,
     { headers: { Authorization: `Bearer ${token}` } }
@@ -249,7 +256,7 @@ export async function getAlbumInfo(
 export async function getArtistInfo(
   token: string,
   id: string
-): Promise<SpotifyArtistDetail> {
+): Promise<SpotifyArtistInfoResult> {
   const [artistRes, topTracksRes, albumsRes] = await Promise.all([
     spotifyFetch(token, `/artists/${id}`),
     spotifyFetch(token, `/artists/${id}/top-tracks`),
@@ -258,9 +265,7 @@ export async function getArtistInfo(
   const artist = await artistRes.json() as SpotifyArtistDetail;
   const topTracks = await topTracksRes.json() as { tracks: SpotifyTrackDetail[] };
   const albums = await albumsRes.json() as { items: SpotifyAlbumDetail[] };
-  artist._topTracks = topTracks.tracks;
-  artist._albums = albums.items;
-  return artist;
+  return { ...artist, topTracks: topTracks.tracks, albums: albums.items };
 }
 
 export async function getPlaylistInfo(
@@ -274,16 +279,11 @@ export async function getPlaylistInfo(
 export function formatItemInfo(type: string, data: unknown): string {
   if (type === "track") {
     const t = data as SpotifyTrackDetail;
-    const artists = t.artists.map((a) => a.name).join(", ");
-    const durationMin = Math.floor(t.duration_ms / 60000);
-    const durationSec = Math.floor((t.duration_ms % 60000) / 1000)
-      .toString()
-      .padStart(2, "0");
     return [
       `Track: ${t.name}`,
-      `Artists: ${artists}`,
+      `Artists: ${artistNames(t.artists)}`,
       `Album: ${t.album.name}`,
-      `Duration: ${durationMin}:${durationSec}`,
+      `Duration: ${formatDuration(t.duration_ms)}`,
       `Track Number: ${t.track_number}`,
       `URI: spotify:track:${t.id}`,
     ].join("\n");
@@ -291,16 +291,15 @@ export function formatItemInfo(type: string, data: unknown): string {
 
   if (type === "album") {
     const a = data as SpotifyAlbumDetail;
-    const artists = a.artists.map((ar) => ar.name).join(", ");
     const tracks = a.tracks?.items
       ?.map(
         (t: SpotifyTrackSimple, i: number) =>
-          `  ${i + 1}. ${t.name} (${t.artists.map((ar) => ar.name).join(", ")})`
+          `  ${i + 1}. ${t.name} (${artistNames(t.artists)})`
       )
       .join("\n");
     return [
       `Album: ${a.name}`,
-      `Artists: ${artists}`,
+      `Artists: ${artistNames(a.artists)}`,
       `Release Date: ${a.release_date ?? "Unknown"}`,
       `Total Tracks: ${a.total_tracks}`,
       `Genres: ${a.genres?.join(", ") || "N/A"}`,
@@ -312,12 +311,12 @@ export function formatItemInfo(type: string, data: unknown): string {
   }
 
   if (type === "artist") {
-    const a = data as SpotifyArtistDetail;
-    const topTracks = a._topTracks
+    const a = data as SpotifyArtistInfoResult;
+    const topTracks = a.topTracks
       ?.slice(0, 5)
       .map((t, i) => `  ${i + 1}. ${t.name} (${t.album.name})`)
       .join("\n");
-    const albums = a._albums
+    const albums = a.albums
       ?.slice(0, 5)
       .map((al, i) => `  ${i + 1}. ${al.name} (${al.release_date?.substring(0, 4) ?? "Unknown"})`)
       .join("\n");
@@ -340,8 +339,7 @@ export function formatItemInfo(type: string, data: unknown): string {
       .map((item, i) => {
         const t = item.track;
         if (!t) return `  ${i + 1}. (unavailable)`;
-        const artists = t.artists.map((a) => a.name).join(", ");
-        return `  ${i + 1}. ${t.name} - ${artists}`;
+        return `  ${i + 1}. ${t.name} - ${artistNames(t.artists)}`;
       })
       .join("\n");
     return [
@@ -460,16 +458,12 @@ export async function searchMyPlaylists(
 export function formatCurrentTrack(data: SpotifyCurrentTrack | null): string {
   if (!data || !data.item) return "No track is currently playing.";
   const t = data.item;
-  const artists = t.artists.map((a) => a.name).join(", ");
-  const progress = data.progress_ms
-    ? `${Math.floor(data.progress_ms / 60000)}:${Math.floor((data.progress_ms % 60000) / 1000).toString().padStart(2, "0")}`
-    : "0:00";
-  const duration = `${Math.floor(t.duration_ms / 60000)}:${Math.floor((t.duration_ms % 60000) / 1000).toString().padStart(2, "0")}`;
+  const progress = data.progress_ms ? formatDuration(data.progress_ms) : "0:00";
   return [
     `Now Playing: ${t.name}`,
-    `Artists: ${artists}`,
+    `Artists: ${artistNames(t.artists)}`,
     `Album: ${t.album.name}`,
-    `Progress: ${progress} / ${duration}`,
+    `Progress: ${progress} / ${formatDuration(t.duration_ms)}`,
     `Playing: ${data.is_playing ? "Yes" : "Paused"}`,
     `URI: spotify:track:${t.id}`,
   ].join("\n");
@@ -479,15 +473,13 @@ export function formatQueue(data: SpotifyQueue): string {
   const lines: string[] = [];
   if (data.currently_playing) {
     const t = data.currently_playing;
-    const artists = t.artists?.map((a) => a.name).join(", ") ?? "Unknown";
-    lines.push(`Now Playing: ${t.name} - ${artists}`);
+    lines.push(`Now Playing: ${t.name} - ${t.artists ? artistNames(t.artists) : "Unknown"}`);
   }
   if (data.queue && data.queue.length > 0) {
     lines.push("\nQueue:");
     for (let i = 0; i < data.queue.length && i < 20; i++) {
       const t = data.queue[i];
-      const artists = t.artists?.map((a) => a.name).join(", ") ?? "Unknown";
-      lines.push(`  ${i + 1}. ${t.name} - ${artists}`);
+      lines.push(`  ${i + 1}. ${t.name} - ${t.artists ? artistNames(t.artists) : "Unknown"}`);
     }
   } else if (lines.length === 0) {
     return "Queue is empty.";
@@ -603,8 +595,11 @@ interface SpotifyArtistDetail {
   name: string;
   genres?: string[];
   followers?: { total: number };
-  _topTracks?: SpotifyTrackDetail[];
-  _albums?: SpotifyAlbumDetail[];
+}
+
+interface SpotifyArtistInfoResult extends SpotifyArtistDetail {
+  topTracks: SpotifyTrackDetail[];
+  albums: SpotifyAlbumDetail[];
 }
 
 interface SpotifyPlaylistDetail {

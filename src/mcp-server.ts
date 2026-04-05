@@ -36,7 +36,6 @@ export class SpotifyMcpServer extends McpAgent<Env, unknown, SpotifyAuthProps> {
     version: "1.0.0",
   });
 
-  /** Run an async function with automatic token management and 401 retry. */
   private async withAuth<T>(
     fn: (token: string) => Promise<T>
   ): Promise<T> {
@@ -59,7 +58,6 @@ export class SpotifyMcpServer extends McpAgent<Env, unknown, SpotifyAuthProps> {
     }
   }
 
-  /** Wrap a tool handler with auth + error handling, returning MCP text. */
   private async handleTool(
     fn: (token: string) => Promise<string>
   ): Promise<McpTextResult> {
