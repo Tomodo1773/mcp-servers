@@ -1,7 +1,7 @@
 name = "spotify-mcp"
 main = "src/index.ts"
 compatibility_date = "2025-04-01"
-compatibility_flags = ["nodejs_compat"]
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
 
 [[kv_namespaces]]
 binding = "OAUTH_KV"
