@@ -35,11 +35,7 @@ export class SpotifyMcpServer extends McpAgent<Env, unknown, SpotifyAuthProps> {
           .describe("Number of results (max 10)"),
       },
       async ({ query, type, limit }) => {
-        let userId = this.props?.userId;
-        // Fallback: look up latest userId from KV when props are empty
-        if (!userId) {
-          userId = await this.env.SPOTIFY_TOKENS.get("__latest_user_id__") ?? undefined;
-        }
+        const userId = this.props?.userId;
         if (!userId) {
           return {
             content: [

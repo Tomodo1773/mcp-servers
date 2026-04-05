@@ -112,8 +112,6 @@ app.get("/callback", async (c) => {
     expires_at: Date.now() + tokenData.expires_in * 1000,
   };
   await c.env.SPOTIFY_TOKENS.put(userData.id, JSON.stringify(spotifyTokens));
-  // Store latest userId for fallback when props are unavailable
-  await c.env.SPOTIFY_TOKENS.put("__latest_user_id__", userData.id);
 
   // Complete MCP OAuth flow, passing userId as props
   const { redirectTo } = await c.env.OAUTH_PROVIDER.completeAuthorization({
