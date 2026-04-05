@@ -1,0 +1,24 @@
+name = "spotify-mcp"
+main = "src/index.ts"
+compatibility_date = "2025-04-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[kv_namespaces]]
+binding = "OAUTH_KV"
+id = "d91b03df13404d23918ffbd949b819f5"
+
+[[kv_namespaces]]
+binding = "SPOTIFY_TOKENS"
+id = "fd9179c0aad44b109824a6c70105684c"
+
+[durable_objects]
+bindings = [
+  { name = "MCP_OBJECT", class_name = "SpotifyMcpServer" }
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["SpotifyMcpServer"]
+
+[dev]
+port = 8000
