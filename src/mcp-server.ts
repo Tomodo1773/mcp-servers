@@ -36,8 +36,8 @@ async function withAuth<T>(
   fn: (token: string, userId: string) => Promise<T>,
 ): Promise<T> {
   const authContext = getMcpAuthContext();
-  const userId = authContext?.props?.userId as string | undefined;
-  if (!userId) {
+  const userId = authContext?.props?.userId;
+  if (typeof userId !== "string" || !userId) {
     throw new Error(
       "Not authenticated. Please reconnect to authorize with Spotify.",
     );
@@ -72,7 +72,6 @@ async function handleTool(
 }
 
 function registerTools(server: McpServer, env: Env): void {
-  // ----- spotify_search -----
   server.tool(
     "spotify_search",
     "Search Spotify for tracks, albums, or artists. To search your own playlists, use spotify_search_my_playlists.",
@@ -97,7 +96,6 @@ function registerTools(server: McpServer, env: Env): void {
       }),
   );
 
-  // ----- spotify_playback -----
   server.tool(
     "spotify_playback",
     "Control Spotify playback: get current track, start, pause, or skip",
@@ -141,7 +139,6 @@ function registerTools(server: McpServer, env: Env): void {
       }),
   );
 
-  // ----- spotify_queue -----
   server.tool(
     "spotify_queue",
     "Manage the Spotify playback queue: add a track or view the current queue",
@@ -168,7 +165,6 @@ function registerTools(server: McpServer, env: Env): void {
       }),
   );
 
-  // ----- spotify_get_info -----
   server.tool(
     "spotify_get_info",
     "Get detailed information about a Spotify item (track, album, artist, or playlist)",
@@ -202,11 +198,10 @@ function registerTools(server: McpServer, env: Env): void {
             return formatItemInfo("artist", data);
           }
           case "playlist": {
-            const ownerId = await getPlaylistOwnerId(token, id);
-            if (ownerId !== userId) {
+            const data = await getPlaylistInfo(token, id);
+            if (data.owner?.id !== userId) {
               return `Error: Playlist ${id} does not belong to you. You can only view info for your own playlists.`;
             }
-            const data = await getPlaylistInfo(token, id);
             return formatItemInfo("playlist", data);
           }
           default:
@@ -215,7 +210,6 @@ function registerTools(server: McpServer, env: Env): void {
       }),
   );
 
-  // ----- spotify_create_playlist -----
   server.tool(
     "spotify_create_playlist",
     "Create a new private Spotify playlist owned by the authenticated user",
@@ -239,7 +233,6 @@ function registerTools(server: McpServer, env: Env): void {
       }),
   );
 
-  // ----- spotify_add_tracks_to_playlist -----
   server.tool(
     "spotify_add_tracks_to_playlist",
     "Add a track to one of your own Spotify playlists",
@@ -268,7 +261,6 @@ function registerTools(server: McpServer, env: Env): void {
       }),
   );
 
-  // ----- spotify_add_track_to_liked_songs -----
   server.tool(
     "spotify_add_track_to_liked_songs",
     "Add a track to the user's Liked Songs library",
@@ -282,7 +274,6 @@ function registerTools(server: McpServer, env: Env): void {
       }),
   );
 
-  // ----- spotify_search_my_playlists -----
   server.tool(
     "spotify_search_my_playlists",
     "Search through your own Spotify playlists by name",
@@ -305,7 +296,6 @@ function registerTools(server: McpServer, env: Env): void {
       }),
   );
 
-  // ----- get_current_anime_playlist -----
   server.tool(
     "get_current_anime_playlist",
     "Get the current anime season playlist name based on the current date (JST)",
