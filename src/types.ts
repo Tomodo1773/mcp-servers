@@ -1,7 +1,6 @@
 export interface Env {
   OAUTH_KV: KVNamespace;
   SPOTIFY_TOKENS: KVNamespace;
-  MCP_OBJECT: DurableObjectNamespace;
   SPOTIFY_CLIENT_ID: string;
   SPOTIFY_CLIENT_SECRET: string;
   OAUTH_PROVIDER: OAuthHelpers;
