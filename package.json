@@ -1,0 +1,19 @@
+{
+  "name": "mcp-servers",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.32.1",
+  "scripts": {
+    "dev:spotify": "pnpm --filter spotify-mcp dev",
+    "dev:gemini": "pnpm --filter gemini-mcp dev",
+    "deploy:spotify": "pnpm --filter spotify-mcp deploy",
+    "deploy:gemini": "pnpm --filter gemini-mcp deploy",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "biome check ./apps",
+    "lint:fix": "biome check --write ./apps",
+    "format": "biome format --write ./apps"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.11"
+  }
+}
