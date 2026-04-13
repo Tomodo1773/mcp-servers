@@ -617,7 +617,7 @@ interface SpotifyPlaylistDetail {
   id: string;
   name: string;
   description?: string;
-  owner?: { display_name?: string };
+  owner?: { id?: string; display_name?: string };
   tracks?: {
     total: number;
     items: Array<{
