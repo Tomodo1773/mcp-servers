@@ -13,5 +13,9 @@ id = "d91b03df13404d23918ffbd949b819f5"
 binding = "SPOTIFY_TOKENS"
 id = "fd9179c0aad44b109824a6c70105684c"
 
+[[migrations]]
+tag = "v2"
+deleted_classes = ["SpotifyMcpServer"]
+
 [dev]
 port = 8000
