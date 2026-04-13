@@ -1,0 +1,58 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gemini-mcp",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-03-10",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  /**
+   * Secrets (register via `pnpm wrangler secret put <NAME>`):
+   *   - GEMINI_API_KEY
+   *   - GITHUB_CLIENT_ID
+   *   - GITHUB_CLIENT_SECRET
+   *   - COOKIE_ENCRYPTION_KEY   (openssl rand -hex 32)
+   */
+  "migrations": [
+    {
+      "new_sqlite_classes": ["MyMCP"],
+      "tag": "v1"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "class_name": "MyMCP",
+        "name": "MCP_OBJECT"
+      }
+    ]
+  },
+  "kv_namespaces": [
+    {
+      "binding": "OAUTH_KV",
+      "id": "d91b03df13404d23918ffbd949b819f5"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "IMAGES",
+      "bucket_name": "gemini-mcp-images"
+    },
+    {
+      "bucket_name": "gemini-mcp-images",
+      "binding": "gemini_mcp_images",
+      "remote": true
+    }
+  ],
+  "vars": {
+    "PUBLIC_BASE_URL": "https://gemini-mcp.tomodo.workers.dev"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "dev": {
+    "port": 8788
+  }
+}

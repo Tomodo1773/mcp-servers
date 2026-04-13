@@ -1,27 +1,19 @@
 {
-  "name": "spotify-mcp",
+  "name": "mcp-servers",
   "version": "1.0.0",
   "private": true,
   "packageManager": "pnpm@10.32.1",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
-    "typecheck": "tsc --noEmit",
-    "lint": "biome check ./src",
-    "lint:fix": "biome check --write ./src",
-    "format": "biome format --write ./src"
-  },
-  "dependencies": {
-    "@cloudflare/workers-oauth-provider": "^0.4.0",
-    "@modelcontextprotocol/sdk": "^1.11.0",
-    "agents": "^0.9.0",
-    "hono": "^4.7.6",
-    "zod": "^4.3.6"
+    "dev:spotify": "pnpm --filter spotify-mcp dev",
+    "dev:gemini": "pnpm --filter gemini-mcp dev",
+    "deploy:spotify": "pnpm --filter spotify-mcp deploy",
+    "deploy:gemini": "pnpm --filter gemini-mcp deploy",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "biome check ./apps",
+    "lint:fix": "biome check --write ./apps",
+    "format": "biome format --write ./apps"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.11",
-    "@cloudflare/workers-types": "^4.20250327.0",
-    "typescript": "^6.0.2",
-    "wrangler": "^4.10.0"
+    "@biomejs/biome": "^2.4.11"
   }
 }
