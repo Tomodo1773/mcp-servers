@@ -1,5 +1,5 @@
 {
-  "name": "spotify-mcp",
+  "name": "@mcp-servers/spotify",
   "version": "1.0.0",
   "private": true,
   "scripts": {
