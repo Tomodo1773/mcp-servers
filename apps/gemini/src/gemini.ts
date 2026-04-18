@@ -1,4 +1,8 @@
-import type { GoogleGenAI } from "@google/genai";
+import {
+  createPartFromBase64,
+  type GoogleGenAI,
+  type Part,
+} from "@google/genai";
 
 export async function fetchUrlSummary(
   ai: GoogleGenAI,
@@ -70,12 +74,10 @@ export async function generateImage(
   prompt: string,
   images: Array<{ mimeType: string; data: string }> = [],
 ): Promise<{ base64: string; mimeType: string }> {
-  const parts: Array<
-    { text: string } | { inlineData: { mimeType: string; data: string } }
-  > = [{ text: prompt }];
-  for (const img of images) {
-    parts.push({ inlineData: { mimeType: img.mimeType, data: img.data } });
-  }
+  const parts: Part[] = [
+    { text: prompt },
+    ...images.map((img) => createPartFromBase64(img.data, img.mimeType)),
+  ];
 
   const res = await ai.models.generateContent({
     model: "gemini-3-pro-image-preview",
