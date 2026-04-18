@@ -68,10 +68,18 @@ export async function transcribeYoutube(
 export async function generateImage(
   ai: GoogleGenAI,
   prompt: string,
+  images: Array<{ mimeType: string; data: string }> = [],
 ): Promise<{ base64: string; mimeType: string }> {
+  const parts: Array<
+    { text: string } | { inlineData: { mimeType: string; data: string } }
+  > = [{ text: prompt }];
+  for (const img of images) {
+    parts.push({ inlineData: { mimeType: img.mimeType, data: img.data } });
+  }
+
   const res = await ai.models.generateContent({
     model: "gemini-3-pro-image-preview",
-    contents: prompt,
+    contents: parts,
   });
 
   for (const part of res.candidates?.[0]?.content?.parts ?? []) {
