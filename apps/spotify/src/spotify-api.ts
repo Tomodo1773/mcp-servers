@@ -77,6 +77,25 @@ export async function refreshAccessToken(
 
   if (!res.ok) {
     const errorBody = await res.text();
+
+    // Spotifyのリフレッシュトークンは2026-07-20以降6か月で失効する。
+    // 失効・失効済みトークンでのリフレッシュは invalid_grant を返すため、
+    // その場合は保存済みトークンを破棄して再認可を促す（リトライしない）。
+    let isInvalidGrant = false;
+    try {
+      const parsed = JSON.parse(errorBody) as { error?: string };
+      isInvalidGrant = parsed.error === "invalid_grant";
+    } catch {
+      // JSON以外のレスポンスはステータスのみで判断できないため無視する
+    }
+
+    if (isInvalidGrant) {
+      await env.SPOTIFY_TOKENS.delete(userId);
+      throw new Error(
+        "Refresh token expired or revoked (invalid_grant). Stored token discarded. Re-authorization required.",
+      );
+    }
+
     throw new Error(`Token refresh failed: ${res.status} ${errorBody}`);
   }
 
