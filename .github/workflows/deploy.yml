@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy Spotify MCP
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
 
-      - uses: pnpm/action-setup@v5.0.0
+      - uses: pnpm/action-setup@v6.0.9
         with:
           version: 10.32.1
 
-      - uses: actions/setup-node@v6.3.0
+      - uses: actions/setup-node@v6.4.0
         with:
           node-version: 22
           cache: pnpm
@@ -24,7 +24,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v3.14.1
+        uses: cloudflare/wrangler-action@v4.0.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -35,13 +35,13 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy Gemini MCP
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
 
-      - uses: pnpm/action-setup@v5.0.0
+      - uses: pnpm/action-setup@v6.0.9
         with:
           version: 10.32.1
 
-      - uses: actions/setup-node@v6.3.0
+      - uses: actions/setup-node@v6.4.0
         with:
           node-version: 22
           cache: pnpm
@@ -49,7 +49,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v3.14.1
+        uses: cloudflare/wrangler-action@v4.0.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
