@@ -1,7 +1,7 @@
 version: 2
 
 updates:
-  # npmパッケージ（バージョンアップデート＋セキュリティアップデート）
+  # npmパッケージ
   - package-ecosystem: npm
     directory: /
     schedule:
@@ -16,11 +16,16 @@ updates:
       semver-major-days: 14
     open-pull-requests-limit: 10
     groups:
-      all-npm-dependencies:
+      npm-version:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      npm-security:
+        applies-to: security-updates
         patterns:
           - "*"
 
-  # GitHub Actionsのバージョンアップデート
+  # GitHub Actions
   - package-ecosystem: github-actions
     directory: /
     schedule:
@@ -32,6 +37,11 @@ updates:
       default-days: 7
     open-pull-requests-limit: 5
     groups:
-      github-actions:
+      github-actions-version:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      github-actions-security:
+        applies-to: security-updates
         patterns:
           - "*"
