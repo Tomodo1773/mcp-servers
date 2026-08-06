@@ -19,8 +19,8 @@ catalogs:
       specifier: ^0.10.0
       version: 0.10.1
     hono:
-      specifier: ^4.12.12
-      version: 4.12.12
+      specifier: ^4.12.34
+      version: 4.13.0
     typescript:
       specifier: ^6.0.2
       version: 6.0.2
@@ -64,7 +64,7 @@ importers:
         version: 0.10.1(@babel/core@7.29.0)(@babel/runtime@7.29.2)(@cloudflare/workers-types@4.20260411.1)(ai@6.0.158(zod@4.3.6))(react@19.2.5)(rolldown@1.0.0-rc.15)(zod@4.3.6)
       hono:
         specifier: 'catalog:'
-        version: 4.12.12
+        version: 4.13.0
       octokit:
         specifier: ^5.0.5
         version: 5.0.5
@@ -92,7 +92,7 @@ importers:
         version: 0.10.1(@babel/core@7.29.0)(@babel/runtime@7.29.2)(@cloudflare/workers-types@4.20260411.1)(ai@6.0.158(zod@4.3.6))(react@19.2.5)(rolldown@1.0.0-rc.15)(zod@4.3.6)
       hono:
         specifier: 'catalog:'
-        version: 4.12.12
+        version: 4.13.0
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -1374,8 +1374,8 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  hono@4.12.12:
-    resolution: {integrity: sha512-p1JfQMKaceuCbpJKAPKVqyqviZdS0eUxH9v82oWo1kb9xjQ5wA6iP3FNVAPDFlz5/p7d45lO+BpSk1tuSZMF4Q==}
+  hono@4.13.0:
+    resolution: {integrity: sha512-jhunvfHWxd7J5EFfSgH4xsYJzSe/lfqbUCxiyyeaQasUsXeEHXtzVid+7EOGByc5JnFa23SSFL3Y2RV/z1T+eQ==}
     engines: {node: '>=16.9.0'}
 
   http-errors@2.0.1:
@@ -2213,9 +2213,9 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@hono/node-server@1.19.13(hono@4.12.12)':
+  '@hono/node-server@1.19.13(hono@4.13.0)':
     dependencies:
-      hono: 4.12.12
+      hono: 4.13.0
 
   '@img/colour@1.1.0': {}
 
@@ -2341,7 +2341,7 @@ snapshots:
 
   '@modelcontextprotocol/sdk@1.29.0(@cfworker/json-schema@4.1.1)(zod@4.3.6)':
     dependencies:
-      '@hono/node-server': 1.19.13(hono@4.12.12)
+      '@hono/node-server': 1.19.13(hono@4.13.0)
       ajv: 8.18.0
       ajv-formats: 3.0.1(ajv@8.18.0)
       content-type: 1.0.5
@@ -2351,7 +2351,7 @@ snapshots:
       eventsource-parser: 3.0.6
       express: 5.2.1
       express-rate-limit: 8.3.2(express@5.2.1)
-      hono: 4.12.12
+      hono: 4.13.0
       jose: 6.2.2
       json-schema-typed: 8.0.2
       pkce-challenge: 5.0.1
@@ -3003,7 +3003,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hono@4.12.12: {}
+  hono@4.13.0: {}
 
   http-errors@2.0.1:
     dependencies:
