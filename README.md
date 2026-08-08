@@ -33,8 +33,8 @@ GitHub OAuth で認証し、Gemini API を活用した情報取得・生成を�
 ## 開発
 
 ```bash
-# 依存関係インストール
-pnpm install
+# 依存関係インストール（Socket Firewall経由）
+sfw pnpm install
 
 # 開発サーバー起動
 pnpm dev:spotify   # http://localhost:8000
