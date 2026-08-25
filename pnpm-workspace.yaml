@@ -1,6 +1,7 @@
 allowBuilds:
   core-js-pure: false
   esbuild: false
+  "@google/genai": true
   protobufjs: false
   sharp: false
   workerd: false
