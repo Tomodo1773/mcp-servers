@@ -176,6 +176,45 @@ export function formatSearchResults(
 }
 
 // ---------------------------------------------------------------------------
+// User top items
+// ---------------------------------------------------------------------------
+
+export type SpotifyTopItemType = "tracks" | "artists";
+export type SpotifyTopItemsTimeRange =
+  | "short_term"
+  | "medium_term"
+  | "long_term";
+
+export async function getTopItems(
+  token: string,
+  type: SpotifyTopItemType,
+  timeRange: SpotifyTopItemsTimeRange,
+  limit: number,
+): Promise<SpotifyTopItemsResult> {
+  const params = new URLSearchParams({
+    time_range: timeRange,
+    limit: String(limit),
+  });
+  const res = await spotifyFetch(token, `/me/top/${type}?${params}`);
+  return res.json();
+}
+
+export function formatTopItems(data: SpotifyTopItemsResult): string {
+  if (data.items.length === 0) {
+    return "No top items found for this time range.";
+  }
+
+  return data.items
+    .map((item, index) => {
+      if ("album" in item) {
+        return `${index + 1}. ${item.name} - ${artistNames(item.artists)} (${item.album.name}) [spotify:track:${item.id}]`;
+      }
+      return `${index + 1}. ${item.name} [spotify:artist:${item.id}]`;
+    })
+    .join("\n");
+}
+
+// ---------------------------------------------------------------------------
 // Playback
 // ---------------------------------------------------------------------------
 
@@ -566,6 +605,12 @@ interface SpotifySearchResult {
     }>;
   };
 }
+
+interface SpotifyTopItemsResult {
+  items: SpotifyTopItem[];
+}
+
+type SpotifyTopItem = SpotifyTrackDetail | SpotifyArtistDetail;
 
 interface SpotifyCurrentTrack {
   is_playing: boolean;

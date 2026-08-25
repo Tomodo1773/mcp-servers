@@ -11,12 +11,14 @@ import {
   formatPlaylistList,
   formatQueue,
   formatSearchResults,
+  formatTopItems,
   getAlbumInfo,
   getArtistInfo,
   getCurrentTrack,
   getPlaylistInfo,
   getPlaylistOwnerId,
   getQueue,
+  getTopItems,
   getTrackInfo,
   getValidToken,
   pausePlayback,
@@ -92,6 +94,33 @@ function registerTools(server: McpServer, env: Env): void {
       handleTool(env, async (token) => {
         const result = await search(token, query, type, limit);
         return formatSearchResults(result, type);
+      }),
+  );
+
+  server.tool(
+    "spotify_get_top_items",
+    "Get the user's top tracks or artists ranked by Spotify affinity, not by exact play count.",
+    {
+      type: z
+        .enum(["tracks", "artists"])
+        .default("tracks")
+        .describe("Type of top items to return"),
+      time_range: z
+        .enum(["short_term", "medium_term", "long_term"])
+        .default("short_term")
+        .describe("Affinity time range: about 4 weeks, 6 months, or 1 year"),
+      limit: z
+        .number()
+        .int()
+        .min(1)
+        .max(50)
+        .default(10)
+        .describe("Number of results (max 50)"),
+    },
+    async ({ type, time_range, limit }) =>
+      handleTool(env, async (token) => {
+        const result = await getTopItems(token, type, time_range, limit);
+        return formatTopItems(result);
       }),
   );
 

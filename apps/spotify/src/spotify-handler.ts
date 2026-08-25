@@ -18,6 +18,7 @@ const SCOPES = [
   "playlist-modify-public",
   "user-library-modify",
   "user-library-read",
+  "user-top-read",
 ].join(" ");
 
 type HonoEnv = { Bindings: Env & { OAUTH_PROVIDER: OAuthHelpers } };
