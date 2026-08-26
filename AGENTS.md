@@ -7,7 +7,7 @@
 Cloudflare Workers上で動作するMCPサーバーのモノレポ。各サーバーはOAuth認証付きのリモートMCPサーバーとして動作する。
 
 - `apps/spotify` — Spotify操作用MCPサーバー（再生制御、検索、プレイリスト管理）
-- `apps/gemini` — Gemini API活用MCPサーバー（URL要約、YouTube文字起こし、画像生成）
+- `apps/gemini` — Gemini API活用MCPサーバー（URL要約、YouTube文字起こし）
 
 ## 開発コマンド
 

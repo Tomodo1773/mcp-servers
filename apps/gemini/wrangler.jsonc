@@ -21,20 +21,6 @@
       "id": "d91b03df13404d23918ffbd949b819f5"
     }
   ],
-  "r2_buckets": [
-    {
-      "binding": "IMAGES",
-      "bucket_name": "gemini-mcp-images"
-    },
-    {
-      "bucket_name": "gemini-mcp-images",
-      "binding": "gemini_mcp_images",
-      "remote": true
-    }
-  ],
-  "vars": {
-    "PUBLIC_BASE_URL": "https://gemini-mcp.tomodo.workers.dev"
-  },
   "observability": {
     "enabled": true
   },

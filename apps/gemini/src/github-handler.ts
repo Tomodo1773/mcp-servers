@@ -27,18 +27,6 @@ const ALLOWED_USERS: Set<string> = new Set(["tomodo1773"]);
 
 const app = new Hono<{ Bindings: Env & { OAUTH_PROVIDER: OAuthHelpers } }>();
 
-app.get("/images/:key", async (c) => {
-  const key = c.req.param("key");
-  const obj = await c.env.IMAGES.get(key);
-  if (!obj) return c.text("Not Found", 404);
-  return new Response(obj.body, {
-    headers: {
-      "content-type": obj.httpMetadata?.contentType ?? "image/png",
-      "cache-control": "public, max-age=31536000, immutable",
-    },
-  });
-});
-
 app.get("/authorize", async (c) => {
   const oauthReqInfo = await c.env.OAUTH_PROVIDER.parseAuthRequest(c.req.raw);
   const { clientId } = oauthReqInfo;
